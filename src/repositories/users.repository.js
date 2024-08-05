@@ -9,8 +9,16 @@ export default class UsersRepository {
         return await UsersModel.find()
     }
 
+    async findResume() {
+        return await UsersModel.find().select('first_name last_name email role')
+    }
+
     async findBy(field) {
         return await UsersModel.findOne(field)
+    }
+
+    async findById(id) {
+        return await UsersModel.findById(id)
     }
 
     async updateOne(id, userData) {
@@ -21,11 +29,23 @@ export default class UsersRepository {
         return await UsersModel.findByIdAndDelete(id)
     }
 
+    /* async deleteInactives() {
+        return await UsersModel.deleteMany({ last_connection: { $lt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2) } }) // 2 días
+    } */
+
+    async deleteInactives() {
+        return await UsersModel.deleteMany({ last_connection: { $lt: new Date(Date.now() - 1000 * 60 * 30) } }) // 30 minutos
+    }
+
     async getAllWithCart() {
         return await UsersModel.find().populate('cart.product')
     }
 
     async paginate(query, options) {
         return await UsersModel.paginate(query, options)
+    }
+
+    async toPremium(id) {
+        return await UsersModel.updateOne({ _id: id }, { $set: { role: 'premium' } })
     }
 }

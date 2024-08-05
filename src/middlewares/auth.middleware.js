@@ -26,7 +26,6 @@ export const authorization = (roles) => {
 					code: ErrorTypes.ERROR_UNAUTHORIZED,
 					cause: 'No se ha enviado un token valido',
 				})
-				// return res.status(401).send({ error: 'No autorizado' })
 			}
 			if (!roles.includes(req.user.user.role)) {
 				CustomError.createError({
@@ -35,7 +34,6 @@ export const authorization = (roles) => {
 					code: ErrorTypes.ERROR_UNAUTHORIZED,
 					cause: 'No tienes permisos suficientes',
 				})
-				// return res.status(401).send({ error: 'No tienes permisos suficientes' })
 			}
 			next()
 		} catch (error) {

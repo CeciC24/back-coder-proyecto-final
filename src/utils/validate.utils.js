@@ -8,6 +8,17 @@ import UsersManager from '../dao/mongo/users.mongo.js'
 
 const UsersMngr = new UsersManager()
 export default class Validate {
+	static positiveNumber = (number, tipo) => {
+		if (number <= 0) {
+			CustomError.createError({
+				name: 'Error al ingresar ' + tipo,
+				message: 'El número debe ser positivo',
+				code: ErrorTypes.ERROR_INVALID_ARGUMENTS,
+				cause: 'El número es menor o igual a 0',
+			})
+		}
+	}
+
 	static id = (id, tipo) => {
 		if (!id) {
 			CustomError.createError({
@@ -150,68 +161,5 @@ export default class Validate {
 				cause: 'La contraseña no puede ser igual a la anterior',
 			})
 		}
-
-		/* 		if (password.length < 6) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña muy corta',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña debe tener al menos 6 caracteres',
-			})
-		}
-
-		if (password.length > 20) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña muy larga',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña debe tener máximo 20 caracteres',
-			})
-		}
-
-		if (!/[a-z]/.test(password)) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña sin minúsculas',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña debe tener al menos una letra minúscula',
-			})
-		}
-
-		if (!/[A-Z]/.test(password)) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña sin mayúsculas',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña debe tener al menos una letra mayúscula',
-			})
-		}
-
-		if (!/[0-9]/.test(password)) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña sin números',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña debe tener al menos un número',
-			})
-		}
-
-		if (!/[!@#$%^&*]/.test(password)) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña sin caracteres especiales',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña debe tener al menos un caracter especial',
-			})
-		}
-
-		if (/\s/.test(password)) {
-			CustomError.createError({
-				name: 'Error al restaurar contraseña',
-				message: 'Contraseña con espacios',
-				code: ErrorTypes.ERROR_DATA,
-				cause: 'La contraseña no puede tener espacios',
-			})
-		} */
 	}
 }

@@ -4,9 +4,10 @@ import FSProductManager from '../dao/memory/products.memory.js'
 import ProductsModel from '../dao/mongo/models/products.model.js'
 import CartsModel from '../dao/mongo/models/carts.model.js'
 import paginateFormat from '../paginateFormat.js'
-import { requireAuth, redirectIfLoggedIn } from '../middlewares/auth.middleware.js'
+import { requireAuth, redirectIfLoggedIn, authorization } from '../middlewares/auth.middleware.js'
 import { passportCall, validateToken } from '../utils/jwt.utils.js'
 import UserManager from '../dao/mongo/users.mongo.js'
+import config from '../config/environment.config.js'
 
 const router = Router()
 
@@ -150,8 +151,17 @@ router.get('/profile', passportCall('current'), requireAuth, (req, res) => {
 	})
 })
 
-router.get('/', passportCall('current'), requireAuth, (req, res) => {
+router.get('/', passportCall('current'), (req, res) => {
 	res.render('index', {
+		user: req.user.user,
+		auth: req.isAuthenticated(),
+	})
+})
+
+router.get('/premium', passportCall('current'), requireAuth, authorization('user'), async (req, res) => {
+	await usersMngr.toPremium(req.user.user._id)
+
+	res.render('premium', {
 		user: req.user.user,
 		auth: req.isAuthenticated(),
 	})
@@ -190,12 +200,39 @@ router.get('/reset-password/:token', passportCall('current'), async (req, res, n
 router.get('/forgot-password', passportCall('current'), (req, res, next) => {
 	try {
 		const error = req.query.error
-	
+
 		res.render('forgotPassword', {
 			title: 'Forgot password',
 			style: '../../css/forgot.css',
 			auth: req.isAuthenticated(),
 			error,
+		})
+	} catch (error) {
+		next(error)
+	}
+})
+
+router.get('/users', passportCall('current'), authorization('admin'), async (req, res, next) => {
+	const options = {
+		page: parseInt(req.query.page) || 1,
+		limit: parseInt(req.query.limit) || 10,
+		sort: req.query.sort ? { role: req.query.sort } : null,
+	}
+	const query = req.query.query ? JSON.parse(req.query.query) : {}
+
+	try {
+		let result = await usersMngr.get(query, options)
+
+		let paginatedUsers = paginateFormat(result, '/users')
+
+		res.render('allUsers', {
+			title: 'Users',
+			style: 'allUsers.css',
+			users: JSON.parse(JSON.stringify(paginatedUsers.payload)),
+			totalPages: paginatedUsers.totalPages,
+			page: paginatedUsers.page,
+			user: req.user.user,
+			auth: req.isAuthenticated(),
 		})
 	} catch (error) {
 		next(error)

@@ -2,6 +2,8 @@ import { createHash } from '../../utils/bcrypt.utils.js'
 import UsersRepository from '../../repositories/users.repository.js'
 import CustomError from '../../utils/customError.utils.js'
 import ErrorTypes from '../../utils/errorTypes.utils.js'
+import { sendSimpleMail } from '../services/email.service.js'
+import config from '../../config/environment.config.js'
 
 export default class UserManager {
 	constructor() {
@@ -14,6 +16,18 @@ export default class UserManager {
 		} catch (error) {
 			CustomError.createError({
 				name: 'Error al obtener usuarios',
+				message: error.message,
+				code: ErrorTypes.ERROR_INTERNAL_ERROR,
+			})
+		}
+	}
+
+	async getResume() {
+		try {
+			return await this.repository.findResume()
+		} catch (error) {
+			CustomError.createError({
+				name: 'Error al obtener resumen de usuarios',
 				message: error.message,
 				code: ErrorTypes.ERROR_INTERNAL_ERROR,
 			})
@@ -34,7 +48,7 @@ export default class UserManager {
 
 	async getById(id) {
 		try {
-			return await this.repository.findBy({ id })
+			return await this.repository.findById(id)
 		} catch (error) {
 			CustomError.createError({
 				name: 'Error al obtener usuario',
@@ -85,6 +99,32 @@ export default class UserManager {
 		}
 	}
 
+	async deleteInactives() {
+		try {
+			const deletedUsers = await this.repository.deleteInactives()
+
+			deletedUsers.forEach((user) => {
+				sendSimpleMail({
+					from: config.emailUser,
+					to: user.email,
+					subject: 'Cuenta eliminada por inactividad',
+					html: `
+						Hola ${user.first_name},
+						<p>Tu cuenta ha sido eliminada por inactividad.</p>
+					`,
+				})
+			})
+
+			return deletedUsers
+		} catch (error) {
+			CustomError.createError({
+				name: 'Error al eliminar usuarios inactivos',
+				message: error.message,
+				code: ErrorTypes.ERROR_INTERNAL_ERROR,
+			})
+		}
+	}
+
 	async getAllWithCart() {
 		try {
 			return await this.repository.getAllWithCart()
@@ -104,11 +144,22 @@ export default class UserManager {
 				limit: limit || 10,
 				sort: sort ? { price: sort } : null,
 			}
-			// const users = paginateFormat(result, '/users')
 			return await this.repository.paginate(query, options)
 		} catch (error) {
 			CustomError.createError({
 				name: 'Error al obtener usuarios paginados',
+				message: error.message,
+				code: ErrorTypes.ERROR_INTERNAL_ERROR,
+			})
+		}
+	}
+
+	async toPremium(id) {
+		try {
+			return await this.repository.toPremium(id)
+		} catch (error) {
+			CustomError.createError({
+				name: 'Error al actualizar usuario a premium',
 				message: error.message,
 				code: ErrorTypes.ERROR_INTERNAL_ERROR,
 			})

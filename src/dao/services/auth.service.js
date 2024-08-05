@@ -50,6 +50,8 @@ export default class AuthManager {
 			})
 		}
 
+		userMngr.update(user._id, { last_connection: Date.now() })
+
 		const token = generateToken(user)
 		return { message: 'Autenticacion exitosa', token }
 	}

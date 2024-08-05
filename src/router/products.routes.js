@@ -5,6 +5,8 @@ import ProductDTO from '../dao/DTOs/product.dto.js'
 import { authorization } from '../middlewares/auth.middleware.js'
 import { passportCall } from '../utils/jwt.utils.js'
 import Validate from '../utils/validate.utils.js'
+import { sendSimpleMail } from '../dao/services/email.service.js'
+import config from '../config/environment.config.js'
 
 const ProductMngr = new ProductManager()
 const ProductRouter = Router()
@@ -43,6 +45,8 @@ ProductRouter.post('/', passportCall('current'), authorization(['admin', 'premiu
 	try {
 		let productData = req.body
 
+		Validate.positiveNumber(productData.price, 'precio')
+		Validate.positiveNumber(productData.stock, 'stock')
 		await Validate.productData(productData)
 		await Validate.existCode(productData.code, ProductMngr)
 
@@ -60,6 +64,8 @@ ProductRouter.put('/:pid', passportCall('current'), authorization(['admin', 'pre
 		const user = req.user.user
 		const product = await ProductMngr.getById(pid)
 
+		if (newField.price) Validate.positiveNumber(newField.price, 'precio')
+		if (newField.stock) Validate.positiveNumber(newField.stock, 'stock')
 		Validate.id(pid, 'producto')
 		await Validate.existID(pid, ProductMngr, 'producto')
 		Validate.isOwner(user, product)
@@ -79,8 +85,19 @@ ProductRouter.delete('/:pid', passportCall('current'), authorization(['admin', '
 		Validate.id(pid, 'producto')
 		await Validate.existID(pid, ProductMngr, 'producto')
 		Validate.isOwner(user, product)
+		
+		const deletedProduct = await ProductMngr.delete(pid)
+		
+		if (user.role === 'premium')
+			sendSimpleMail(
+				config.emailUser,
+				user.email,
+				'Producto eliminado',
+				`Hola ${user.first_name},
+				<p>Le notificamos que el producto ${product.name} ha sido eliminado.</p>`
+			)
 
-		res.status(200).send(await ProductMngr.delete(pid))
+		res.status(200).send(deletedProduct)
 	} catch (error) {
 		next(error)
 	}

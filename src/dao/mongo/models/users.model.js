@@ -14,6 +14,7 @@ const userSchema = new Schema({
 		ref: 'carts',
 	},
 	role: { type: String, enum: ['user', 'premium'] },
+	last_connection: { type: Date, default: Date.now },
 })
 
 const UsersModel = mongoose.model(collection, userSchema)

@@ -9,9 +9,19 @@ const UsersRouter = Router()
 const UserMngr = new UserManager()
 
 // Obtener todos los usuarios
-UsersRouter.get('/', async (req, res, next) => {
+UsersRouter.get('/all', async (req, res, next) => {
 	try {
 		const users = await UserMngr.get()
+		res.status(200).json({ users })
+	} catch (error) {
+		next(error)
+	}
+})
+
+// Obtener resumen de todos los usuarios
+UsersRouter.get('/', async (req, res, next) => {
+	try {
+		const users = await UserMngr.getResume()
 		res.status(200).json({ users })
 	} catch (error) {
 		next(error)
@@ -21,10 +31,13 @@ UsersRouter.get('/', async (req, res, next) => {
 // Obtener un usuario por su ID
 UsersRouter.get('/:id', async (req, res, next) => {
 	try {
-		const { id } = req.params
+		const id = req.params.id
+
 		Validate.id(id, 'usuario')
-		Validate.existID(id, UserMngr, 'usuario')
-		res.status(200).send(await UserMngr.getById(id))
+		await Validate.existID(id, UserMngr, 'usuario')
+
+		const user = await UserMngr.getById(id)
+		res.status(200).send(user)
 	} catch (error) {
 		next(error)
 	}
@@ -49,7 +62,7 @@ UsersRouter.put('/:id', async (req, res, next) => {
 
 	try {
 		Validate.id(id, 'usuario')
-		Validate.existID(id, UserMngr, 'usuario')
+		await Validate.existID(id, UserMngr, 'usuario')
 		res.status(200).send(await UserMngr.update(id, updatedUser))
 	} catch (error) {
 		next(error)
@@ -61,8 +74,17 @@ UsersRouter.delete('/:id', async (req, res, next) => {
 	try {
 		const { id } = req.params
 		Validate.id(id, 'usuario')
-		Validate.existID(id, UserMngr, 'usuario')
+		await Validate.existID(id, UserMngr, 'usuario')
 		res.status(200).json(await UserMngr.delete(id))
+	} catch (error) {
+		next(error)
+	}
+})
+
+// Eliminar usuarios inactivos
+UsersRouter.delete('/', async (req, res, next) => {
+	try {
+		res.status(200).json(await UserMngr.deleteInactives())
 	} catch (error) {
 		next(error)
 	}

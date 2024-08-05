@@ -33,7 +33,7 @@ CartsRouter.post('/', async (req, res, next) => {
 	}
 })
 
-CartsRouter.post('/:cid/product/:pid', passportCall('current'), authorization('user'), async (req, res, next) => {
+CartsRouter.post('/:cid/product/:pid', passportCall('current'), authorization('user, premium'), async (req, res, next) => {
 	let cid = req.params.cid
 	let pid = req.params.pid
 
@@ -44,7 +44,7 @@ CartsRouter.post('/:cid/product/:pid', passportCall('current'), authorization('u
 	}
 })
 
-CartsRouter.delete('/:cid/product/:pid', async (req, res, next) => {
+CartsRouter.delete('/:cid/product/:pid', passportCall('current'), authorization('user, premium'), async (req, res, next) => {
 	let cid = req.params.cid
 	let pid = req.params.pid
 

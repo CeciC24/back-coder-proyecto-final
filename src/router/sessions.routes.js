@@ -63,6 +63,7 @@ SessionsRouter.post('/logout', (req, res) => {
 SessionsRouter.post('/register', async (req, res, next) => {
 	try {
 		const { first_name, last_name, email, age, password } = req.body
+		Validate.positiveNumber(age, 'edad')
 
 		const userToken = await authManager.register({ first_name, last_name, email, age, password })
 
@@ -142,5 +143,17 @@ SessionsRouter.get(
 		}).redirect('/')
 	}
 )
+
+// * Convertir usuario actual a premium
+SessionsRouter.post('/premium', passportCall('current'),  authorization('user'), async (req, res, next) => {
+	try {
+		const user = req.user.user
+		await UsersMngr.toPremium(user._id)
+		const updatedUser = await UsersMngr.getById(user._id)
+		res.status(200).send(updatedUser)
+	} catch (error) {
+		next(error)
+	}
+})
 
 export default SessionsRouter

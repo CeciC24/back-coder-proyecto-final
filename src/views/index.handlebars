@@ -1,9 +1,17 @@
 <div class="container">
-    <h2>¡Bienvenido/a {{user.first_name}}!</h2>
-    <h4>Si estas viendo este mensaje es porque te logueaste correctamente.</h4>
+    {{#if auth}}
+        <h2>¡Bienvenido/a {{user.first_name}}!</h2>
+        <h4>Si estas viendo este mensaje es porque te logueaste correctamente.</h4>
 
-    <a href="/profile">Ver mi perfil</a>
-    <a href="/products">Ver productos</a>
+        <a href="/profile">Ver mi perfil</a>
+        <a href="/products">Ver productos</a>
+    {{else}}
+        <h2>¡Bienvenido/a!</h2>
+        <h4>Debes iniciar sesión para operar en la plataforma.</h4>
+
+        <a href="/login">Iniciar sesión</a>
+        <a href="/register">Registrarse</a>
+    {{/if}}
 </div>
 
 <script src='js/logout.js'></script>
