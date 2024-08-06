@@ -88,7 +88,7 @@ CartsRouter.put('/:cid/product/:pid', async (req, res, next) => {
 	}
 })
 
-CartsRouter.get('/:cid/purchase', async (req, res, next) => {
+CartsRouter.post('/:cid/purchase', passportCall('current'), async (req, res, next) => {
 	let cid = req.params.cid
 
 	try {

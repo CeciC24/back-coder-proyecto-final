@@ -1,14 +1,22 @@
-<div class="container">
+<div class="container cart-container">
     <h2>Carrito</h2>
     <ul>
         {{#each products}}
-            <li>{{product.title}} - Cantidad: {{quantity}} - Precio: {{product.price}}</li>
+            <li class="product" data-product-id="{{product._id}}">
+                <span class="product-title">{{product.title}}</span> - 
+                Cantidad: <span class="product-quantity">{{quantity}}</span> - 
+                Precio: <span class="product-price">{{product.price}}</span>
+                <button type='button' class='deleteFromCartBtn' productID={{product._id}} cartID={{../cartID}}>Eliminar del carrito</button>
+            </li>
         {{/each}}
     </ul>
 
-    <p>Total: {{total}}</p>
+    <p>Total: <span class="total-price">{{total}}</span></p>
+    <button type='button' class='purchaseBtn' cartID={{cartID}}>Realizar compra</button>
 
     <a href='/products'>Volver a todos los productos</a>
 </div>
 
 <script src='js/logout.js'></script>
+<script src='../js/deleteFromCart.js'></script>
+<script src='../js/purchase.js'></script>

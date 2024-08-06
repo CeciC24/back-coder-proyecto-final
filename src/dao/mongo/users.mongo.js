@@ -4,12 +4,13 @@ import CustomError from '../../utils/customError.utils.js'
 import ErrorTypes from '../../utils/errorTypes.utils.js'
 import { sendSimpleMail } from '../services/email.service.js'
 import config from '../../config/environment.config.js'
+import CartManager from './carts.mongo.js'
 
 export default class UserManager {
 	constructor() {
 		this.repository = new UsersRepository()
 	}
-
+	
 	async get() {
 		try {
 			return await this.repository.find()
@@ -21,7 +22,7 @@ export default class UserManager {
 			})
 		}
 	}
-
+	
 	async getResume() {
 		try {
 			return await this.repository.findResume()
@@ -45,7 +46,7 @@ export default class UserManager {
 			})
 		}
 	}
-
+	
 	async getById(id) {
 		try {
 			return await this.repository.findById(id)
@@ -57,7 +58,7 @@ export default class UserManager {
 			})
 		}
 	}
-
+	
 	async create(userData) {
 		try {
 			userData.password = createHash(userData.password)
@@ -70,7 +71,7 @@ export default class UserManager {
 			})
 		}
 	}
-
+	
 	async update(id, userData) {
 		try {
 			if (userData.password) {
@@ -86,9 +87,13 @@ export default class UserManager {
 			})
 		}
 	}
-
+	
 	async delete(id) {
+		const CartMngr = new CartManager()
+
 		try {
+			const user = await this.repository.findById(id)
+			await CartMngr.delete(user.cart)
 			return await this.repository.findByIdAndDelete(id)
 		} catch (error) {
 			CustomError.createError({

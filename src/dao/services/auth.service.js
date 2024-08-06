@@ -6,8 +6,10 @@ import config from '../../config/environment.config.js'
 import CustomError from '../../utils/customError.utils.js'
 import ErrorTypes from '../../utils/errorTypes.utils.js'
 import { sendSimpleMail } from './email.service.js'
+import CartManager from '../mongo/carts.mongo.js'
 
 const userMngr = new UserManager()
+const cartMngr = new CartManager()
 
 export default class AuthManager {
 	constructor() {}
@@ -75,12 +77,15 @@ export default class AuthManager {
 			})
 		}
 
+		const newCart = await cartMngr.create()
+
 		const newUser = {
 			first_name,
 			last_name,
 			email,
 			age,
 			password,
+			cart: newCart._id,
 		}
 
 		const userCreated = await userMngr.create(newUser)

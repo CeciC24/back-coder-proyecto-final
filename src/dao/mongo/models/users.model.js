@@ -13,7 +13,7 @@ const userSchema = new Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'carts',
 	},
-	role: { type: String, enum: ['user', 'premium'] },
+	role: { type: String, enum: ['user', 'premium'], default: 'user' },
 	last_connection: { type: Date, default: Date.now },
 })
 

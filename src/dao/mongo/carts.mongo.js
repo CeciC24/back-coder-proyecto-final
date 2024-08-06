@@ -218,30 +218,45 @@ export default class CartManager {
 			let amountPurchased = 0
 			let productsNotPurchased = []
 
-			products.forEach(async (product) => {
+			for (const prod of products) {
 				try {
-					await ProductMngr.purchase(product.product.id, product.quantity)
-					amountPurchased += product.product.price * product.quantity
+					await ProductMngr.purchase(prod.product._id, prod.quantity)
+					amountPurchased += prod.product.price * prod.quantity
 				} catch (error) {
-					productsNotPurchased.push({ product: product.product.id, quantity: product.quantity })
+					productsNotPurchased.push({ product: prod.product._id, quantity: prod.quantity })
 				}
-			})
+			}
 
 			TicketMngr.create({ amount: amountPurchased, purchaser: user.email })
 
 			await this.update(cid, productsNotPurchased)
 
-			if (productsNotPurchased.length > 0) {
+			/* if (productsNotPurchased.length > 0) {
 				return (
 					`No se pudo realizar la compra de los siguientes productos: ` +
 					productsNotPurchased.map((p) => p.product)
 				)
-			}
+			} */
 
 			return await this.getById(cid)
 		} catch (error) {
 			CustomError.createError({
 				name: 'Error al realizar compra',
+				message: error.message,
+				code: ErrorTypes.ERROR_INTERNAL_ERROR,
+			})
+		}
+	}
+
+	async delete(cid) {
+		Validate.id(cid, 'carrito')
+		await Validate.existID(cid, this, 'carrito')
+
+		try {
+			return await this.repository.deleteById(cid)
+		} catch (error) {
+			CustomError.createError({
+				name: 'Error al eliminar carrito',
 				message: error.message,
 				code: ErrorTypes.ERROR_INTERNAL_ERROR,
 			})

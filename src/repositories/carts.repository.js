@@ -16,4 +16,8 @@ export default class CartsRepository {
     async updateById(id, cartData) {
         return await CartsModel.findByIdAndUpdate(id, cartData, { new: true })
     }
+
+    async deleteById(id) {
+        return await CartsModel.findByIdAndDelete(id)
+    }
 }

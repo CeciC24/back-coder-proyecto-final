@@ -59,12 +59,14 @@ const initializePassport = () => {
 					let user = await UsersModel.findOne({ email: email })
 					let githubUser = user
 					if (!user) {
+						const newCart = await cartMngr.create()
 						user = {
 							first_name: profile._json.name,
 							last_name: ' ',
-							email: email,
-							age: 24,
-							password: 'password',
+							email,
+							age: 0,
+							password: 'githubSecretPass24',
+							cart: newCart._id,
 						}
 						githubUser = await userMngr.create(user)
 					}

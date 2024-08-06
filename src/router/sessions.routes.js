@@ -4,14 +4,12 @@ import passport from 'passport'
 import config from '../config/environment.config.js'
 import AuthManager from '../dao/services/auth.service.js'
 import { authorization } from '../middlewares/auth.middleware.js'
-import { passportCall, validateToken } from '../utils/jwt.utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
 import { CurrentUserDTO } from '../dao/DTOs/user.dto.js'
 import CustomError from '../utils/customError.utils.js'
 import ErrorTypes from '../utils/errorTypes.utils.js'
 import UserManager from '../dao/mongo/users.mongo.js'
 import Validate from '../utils/validate.utils.js'
-import { de } from '@faker-js/faker'
-import { isValidPassword } from '../utils/bcrypt.utils.js'
 
 const SessionsRouter = Router()
 const UsersMngr = new UserManager()

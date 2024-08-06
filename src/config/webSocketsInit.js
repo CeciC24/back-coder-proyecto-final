@@ -1,5 +1,7 @@
+import FSCartManager from '../dao/memory/carts.memory.js'
 import FSProductManager from '../dao/memory/products.memory.js'
 import { Server } from 'socket.io'
+import CartManager from '../dao/mongo/carts.mongo.js'
 
 // Inicialización de Websockets (File System)
 export default function webSocketsInit(server) {
@@ -14,7 +16,7 @@ export default function webSocketsInit(server) {
     
             socket.on('addProduct', async (product) => {
                 try {
-                    const productAdded = await FSProductMngr.addProduct(product)
+                    const productAdded = await FSProductMngr.create(product)
                     io.emit('addToTheList', productAdded)
                 } catch (error) {
                     console.error(error.message)
@@ -23,17 +25,11 @@ export default function webSocketsInit(server) {
     
             socket.on('deleteProduct', async (productID) => {
                 try {
-                    await FSProductMngr.deleteProduct(productID)
+                    await FSProductMngr.delete(productID)
                     io.emit('deleteFromList', productID)
                 } catch (error) {
                     console.error(error.message)
                 }
-            })
-    
-            socket.on('addToCart', async (product) => {
-                // Aún no implementado
-                /* const cart = await CartMngr.addProductToCart(cartID, product._id) */
-                /* io.emit('productAddedToCart', cart) */
             })
         })
     } catch (error) {

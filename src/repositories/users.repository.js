@@ -6,7 +6,7 @@ export default class UsersRepository {
     }
 
     async find() {
-        return await UsersModel.find()
+        return await UsersModel.find().populate('cart')
     }
 
     async findResume() {

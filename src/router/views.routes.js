@@ -2,16 +2,17 @@ import { Router } from 'express'
 
 import FSProductManager from '../dao/memory/products.memory.js'
 import ProductsModel from '../dao/mongo/models/products.model.js'
-import CartsModel from '../dao/mongo/models/carts.model.js'
 import paginateFormat from '../paginateFormat.js'
 import { requireAuth, redirectIfLoggedIn, authorization } from '../middlewares/auth.middleware.js'
 import { passportCall, validateToken } from '../utils/jwt.utils.js'
 import UserManager from '../dao/mongo/users.mongo.js'
+import CartManager from '../dao/mongo/carts.mongo.js'
 import config from '../config/environment.config.js'
 
 const router = Router()
 
 const usersMngr = new UserManager()
+const cartsMngr = new CartManager()
 const FSProductMngr = new FSProductManager('src/dao/memory/data/products.json')
 const getFSProducts = FSProductMngr.get()
 
@@ -28,11 +29,13 @@ router.get('/home', async (req, res) => {
 			productLimit = allProducts.slice(0, limit)
 		}
 
+		const auth = req.isAuthenticated()
+		
 		res.render('homeFS', {
 			title: 'Home',
 			style: 'home.css',
 			products: productLimit,
-			auth: req.isAuthenticated(),
+			auth,
 		})
 	} catch (error) {
 		return res.status(500).send({ error: 'Error al obtener productos' })
@@ -42,12 +45,13 @@ router.get('/home', async (req, res) => {
 router.get('/realtimeproducts', async (req, res) => {
 	try {
 		let allProducts = await getFSProducts
-
+		const auth = req.isAuthenticated()
+		
 		res.render('realTimeProducts', {
 			title: 'Real time Products',
 			style: 'realTimeProducts.css',
 			products: allProducts,
-			auth: req.isAuthenticated(),
+			auth,
 		})
 	} catch (error) {
 		return res.status(500).send({ error: 'Error al obtener productos' })
@@ -65,7 +69,8 @@ router.get('/products', passportCall('current'), async (req, res) => {
 
 	try {
 		let result = await ProductsModel.paginate(query, options)
-
+		const auth = req.isAuthenticated()
+		
 		let paginatedProducts = paginateFormat(result, '/products')
 
 		res.render('allProducts', {
@@ -75,7 +80,9 @@ router.get('/products', passportCall('current'), async (req, res) => {
 			totalPages: paginatedProducts.totalPages,
 			page: paginatedProducts.page,
 			user: req.user.user,
-			auth: req.isAuthenticated(),
+			auth,
+			notAdmin: auth ? req.user.user.role !== 'admin' : true,
+			cartID: auth ? req.user.user.cart : "null",
 		})
 	} catch (error) {
 		return res.status(500).send({ error: 'Error al obtener productos' })
@@ -87,7 +94,8 @@ router.get('/products/:id', passportCall('current'), async (req, res) => {
 
 	try {
 		const product = await ProductsModel.findById(id).lean()
-
+		const auth = req.isAuthenticated()
+		
 		if (!product) {
 			return res.status(404).send({ error: 'Producto no encontrado' })
 		}
@@ -96,33 +104,30 @@ router.get('/products/:id', passportCall('current'), async (req, res) => {
 			title: product.title,
 			style: '../../css/singleProduct.css',
 			product: product,
-			auth: req.isAuthenticated(),
+			auth,
+			notAdmin: auth ? req.user.user.role !== 'admin' : true,
+			cartID: auth ? req.user.user.cart : "null",
 		})
 	} catch (error) {
 		return res.status(500).send({ error: 'Error al obtener producto' })
 	}
 })
 
-router.get('/carts/:cid', passportCall('current'), async (req, res) => {
-	const id = req.params.cid
-
+router.get('/cart', passportCall('current'), requireAuth, async (req, res) => {
 	try {
-		const cart = await CartsModel.findById(id).lean()
-
-		if (!cart) {
-			return res.status(404).send({ error: 'Carrito no encontrado' })
-		}
-
+		const cartID = req.user.user.cart
+		const cart = await cartsMngr.getById(cartID)
 		const products = cart.products
-
 		const total = products.reduce((acc, p) => acc + p.product.price * p.quantity, 0)
 
 		res.render('cart', {
 			title: 'Carrito',
 			style: '../../css/cart.css',
-			products: products,
+			products: JSON.parse(JSON.stringify(products)),
 			total,
-			auth: req.isAuthenticated(),
+			auth: true,
+			notAdmin: req.user.user.role !== 'admin',
+			cartID,
 		})
 	} catch (error) {
 		return res.status(500).send({ error: 'Error al obtener carrito' })
@@ -145,38 +150,54 @@ router.get('/logout', passportCall('current'), requireAuth, (req, res) => {
 })
 
 router.get('/profile', passportCall('current'), requireAuth, (req, res) => {
+	const auth = req.isAuthenticated()
+
 	res.render('profile', {
 		user: req.user.user,
-		auth: req.isAuthenticated(),
+		auth,
+		notAdmin: auth ? req.user.user.role !== 'admin' : true,
+		cartID: auth ? req.user.user.cart : "null",
 	})
 })
 
 router.get('/', passportCall('current'), (req, res) => {
+	const auth = req.isAuthenticated()
+
 	res.render('index', {
 		user: req.user.user,
-		auth: req.isAuthenticated(),
+		auth,
+		notAdmin: auth ? req.user.user.role !== 'admin' : true,
+		cartID: auth ? req.user.user.cart : "null",
 	})
 })
 
 router.get('/premium', passportCall('current'), requireAuth, authorization('user'), async (req, res) => {
 	await usersMngr.toPremium(req.user.user._id)
-
+	const auth = req.isAuthenticated()
+	
 	res.render('premium', {
 		user: req.user.user,
-		auth: req.isAuthenticated(),
+		auth,
+		notAdmin: auth ? req.user.user.role !== 'admin' : true,
+		cartID: auth ? req.user.user.cart : "null",
 	})
 })
 
 router.get('/restore', passportCall('current'), (req, res) => {
+	const auth = req.isAuthenticated()
+	
 	res.render('restore', {
 		title: 'Restore password',
 		style: '../../css/restore.css',
-		auth: req.isAuthenticated(),
+		auth,
+		notAdmin: auth ? req.user.user.role !== 'admin' : true,
+		cartID: auth ? req.user.user.cart : "null",
 	})
 })
 
 router.get('/reset-password/:token', passportCall('current'), async (req, res, next) => {
 	try {
+		const auth = req.isAuthenticated()
 		const { token } = req.params
 
 		const decodedToken = validateToken(token)
@@ -189,7 +210,9 @@ router.get('/reset-password/:token', passportCall('current'), async (req, res, n
 		res.render('resetPassword', {
 			title: 'Reset password',
 			style: '../../css/reset.css',
-			auth: req.isAuthenticated(),
+			auth,
+			notAdmin: auth ? req.user.user.role !== 'admin' : true,
+			cartID: auth ? req.user.user.cart : "null",
 			error: req.query.error,
 		})
 	} catch (error) {
@@ -199,12 +222,15 @@ router.get('/reset-password/:token', passportCall('current'), async (req, res, n
 
 router.get('/forgot-password', passportCall('current'), (req, res, next) => {
 	try {
+		const auth = req.isAuthenticated()
 		const error = req.query.error
 
 		res.render('forgotPassword', {
 			title: 'Forgot password',
 			style: '../../css/forgot.css',
-			auth: req.isAuthenticated(),
+			auth,
+			notAdmin: auth ? req.user.user.role !== 'admin' : true,
+			cartID: auth ? req.user.user.cart : "null",
 			error,
 		})
 	} catch (error) {
@@ -222,8 +248,9 @@ router.get('/users', passportCall('current'), authorization('admin'), async (req
 
 	try {
 		let result = await usersMngr.get(query, options)
-
 		let paginatedUsers = paginateFormat(result, '/users')
+
+		const auth = req.isAuthenticated()
 
 		res.render('allUsers', {
 			title: 'Users',
@@ -232,7 +259,9 @@ router.get('/users', passportCall('current'), authorization('admin'), async (req
 			totalPages: paginatedUsers.totalPages,
 			page: paginatedUsers.page,
 			user: req.user.user,
-			auth: req.isAuthenticated(),
+			auth,
+			notAdmin: auth ? req.user.user.role !== 'admin' : true,
+			cartID: auth ? req.user.user.cart : "null",
 		})
 	} catch (error) {
 		next(error)
