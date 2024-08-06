@@ -8,11 +8,13 @@ import { passportCall, validateToken } from '../utils/jwt.utils.js'
 import UserManager from '../dao/mongo/users.mongo.js'
 import CartManager from '../dao/mongo/carts.mongo.js'
 import config from '../config/environment.config.js'
+import AuthManager from '../dao/services/auth.service.js'
 
 const router = Router()
 
 const usersMngr = new UserManager()
 const cartsMngr = new CartManager()
+const authManager = new AuthManager()
 const FSProductMngr = new FSProductManager('src/dao/memory/data/products.json')
 const getFSProducts = FSProductMngr.get()
 
@@ -145,7 +147,8 @@ router.get('/login', passportCall('current'), redirectIfLoggedIn, (req, res) => 
 	})
 })
 
-router.get('/logout', passportCall('current'), requireAuth, (req, res) => {
+router.get('/logout', passportCall('current'), requireAuth, async (req, res) => {
+	await authManager.logout(req.user.user, res)
 	res.redirect('/login')
 })
 

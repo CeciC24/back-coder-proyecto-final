@@ -49,10 +49,9 @@ SessionsRouter.post('/login', async (req, res, next) => {
 })
 
 // * Logout - JWT
-SessionsRouter.post('/logout', async (req, res, next) => {
+SessionsRouter.post('/logout', passportCall('current'), async (req, res, next) => {
 	try {
-		await authManager.logout(req.user.user)
-		res.clearCookie(config.tokenCookieName).send({ status: 'success', message: 'Sesión cerrada' })
+		await authManager.logout(req.user.user, res)
 	} catch (error) {
 		next(error)
 	}

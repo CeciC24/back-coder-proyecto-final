@@ -58,7 +58,7 @@ export default class AuthManager {
 		return { message: 'Autenticacion exitosa', token }
 	}
 
-	async logout(user) {
+	async logout(user, res) {
 		if (!user) {
 			CustomError.createError({
 				name: 'Error al cerrar sesion',
@@ -69,7 +69,7 @@ export default class AuthManager {
 
 		userMngr.update(user._id, { last_connection: Date.now() })
 
-		return { message: 'Sesion cerrada' }
+		res.clearCookie(config.tokenCookieName).send({ status: 'success', message: 'Sesión cerrada' })
 	}
 
 	async register({ first_name, last_name, email, age, password }) {
