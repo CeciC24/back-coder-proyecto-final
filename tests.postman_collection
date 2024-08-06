@@ -59,7 +59,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/cart/663e81663b4483c76a98b391",
+							"raw": "http://localhost:8080/api/cart/66b1498b3199146bdf45e241",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -68,7 +68,7 @@
 							"path": [
 								"api",
 								"cart",
-								"663e81663b4483c76a98b391"
+								"66b1498b3199146bdf45e241"
 							]
 						}
 					},
@@ -124,7 +124,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/cart/663e81663b4483c76a98b391/product/663c0f3616fa47faa1537dfb",
+							"raw": "http://localhost:8080/api/cart/663e81653b4483c76a98b38f/product/663c0eee16fa47faa1537df5",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -133,9 +133,9 @@
 							"path": [
 								"api",
 								"cart",
-								"663e81663b4483c76a98b391",
+								"663e81653b4483c76a98b38f",
 								"product",
-								"663c0f3616fa47faa1537dfb"
+								"663c0eee16fa47faa1537df5"
 							]
 						}
 					},
@@ -340,7 +340,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \"quantity\": 10 }",
+							"raw": "{ \"quantity\": 30 }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -633,6 +633,76 @@
 								"api",
 								"messages",
 								"663e877d3df427152828fcd5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "All tickets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tickets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find ticket by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/tickets/66b17eac5339eb912395d329",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tickets",
+								"66b17eac5339eb912395d329"
 							]
 						}
 					},
@@ -990,7 +1060,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Nuevo nombre del producto 11\",\r\n    \"stock\": 10\r\n}",
+							"raw": "{\r\n    \"title\": \"Producto de prueba 12\",\r\n    \"stock\": 24\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -998,7 +1068,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/products/663e8c483df427152828fd0b",
+							"raw": "http://localhost:8080/api/products/66972866ae2d47da6aac5f05",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1007,7 +1077,7 @@
 							"path": [
 								"api",
 								"products",
-								"663e8c483df427152828fd0b"
+								"66972866ae2d47da6aac5f05"
 							]
 						}
 					},
@@ -1075,6 +1145,27 @@
 						"method": "GET",
 						"header": [],
 						"url": {
+							"raw": "http://localhost:8080/api/users/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Users resume",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
 							"raw": "http://localhost:8080/api/users/",
 							"protocol": "http",
 							"host": [
@@ -1096,7 +1187,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/users/663bdabcd9ea8b76577daee4",
+							"raw": "http://localhost:8080/api/users/66b1498c3199146bdf45e243",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1105,7 +1196,7 @@
 							"path": [
 								"api",
 								"users",
-								"663bdabcd9ea8b76577daee4"
+								"66b1498c3199146bdf45e243"
 							]
 						}
 					},
@@ -1177,7 +1268,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/users/663e9239fb638e0128c74490",
+							"raw": "http://localhost:8080/api/users/66b15299c0dc267db77a751c",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1186,7 +1277,27 @@
 							"path": [
 								"api",
 								"users",
-								"663e9239fb638e0128c74490"
+								"66b15299c0dc267db77a751c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete inactive users",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"users"
 							]
 						}
 					},
@@ -1518,6 +1629,27 @@
 								"api",
 								"sessions",
 								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Convert current to Premium",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/sessions/premium",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"sessions",
+								"premium"
 							]
 						}
 					},
