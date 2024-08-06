@@ -18,7 +18,12 @@ export default function middlewaresConfig(app) {
 
 		// Configuración de handlebars
 		app.set('views', __dirname + '/views')
-		app.engine('handlebars', handlebars.engine())
+		const hbs = handlebars.create({
+            helpers: {
+                eq: (a, b) => a === b
+            }
+        })
+        app.engine('handlebars', hbs.engine)
 		app.set('view engine', 'handlebars')
 
 		// Passport

@@ -239,26 +239,14 @@ router.get('/forgot-password', passportCall('current'), (req, res, next) => {
 })
 
 router.get('/users', passportCall('current'), authorization('admin'), async (req, res, next) => {
-	const options = {
-		page: parseInt(req.query.page) || 1,
-		limit: parseInt(req.query.limit) || 10,
-		sort: req.query.sort ? { role: req.query.sort } : null,
-	}
-	const query = req.query.query ? JSON.parse(req.query.query) : {}
-
 	try {
-		let result = await usersMngr.get(query, options)
-		let paginatedUsers = paginateFormat(result, '/users')
-
+		let allUsers = await usersMngr.get()
 		const auth = req.isAuthenticated()
 
 		res.render('allUsers', {
-			title: 'Users',
+			title: 'Administrar Users',
 			style: 'allUsers.css',
-			users: JSON.parse(JSON.stringify(paginatedUsers.payload)),
-			totalPages: paginatedUsers.totalPages,
-			page: paginatedUsers.page,
-			user: req.user.user,
+			users: JSON.parse(JSON.stringify(allUsers)),
 			auth,
 			notAdmin: auth ? req.user.user.role !== 'admin' : true,
 			cartID: auth ? req.user.user.cart : "null",

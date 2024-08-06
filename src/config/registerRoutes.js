@@ -20,6 +20,7 @@ import EmailsRouter from '../router/email.routes.js'
 import { validateToken } from '../utils/jwt.utils.js'
 import config from './environment.config.js'
 import swaggerConfig from './swagger.config.js'
+import TicketsRouter from '../router/tickets.routes.js'
 
 const registerRoutes = (app) => {
 	try {
@@ -40,6 +41,7 @@ const registerRoutes = (app) => {
 		app.use('/api/users', UsersRouter)
 		app.use('/api/messages', MessagesRouter)
 		app.use('/api/sessions', SessionsRouter)
+		app.use('/api/tickets', TicketsRouter)
 
 		// Otras rutas
 		app.use('/', EmailsRouter)

@@ -1,27 +1,25 @@
-<div class="container">
-	<h1>Usuarios</h1>
-	<table class='table'>
-		<thead>
-			<tr>
-				<th>Nombre</th>
-				<th>Email</th>
-				<th>Rol</th>
-				<th>Acciones</th>
-			</tr>
-		</thead>
-		<tbody>
-			{{#each users}}
-				<tr>
-					<td>{{name}}</td>
-					<td>{{email}}</td>
-					<td>{{role}}</td>
-					<td>
-						<a href='/users/{{_id}}'>Ver</a>
-						<a href='/users/{{_id}}/edit'>Editar</a>
-						<a href='/users/{{_id}}/delete'>Eliminar</a>
-					</td>
-				</tr>
-			{{/each}}
-		</tbody>
-	</table>
+<div class='container'>
+	<h2>Administración de usuarios</h2>
+
+	<ul>
+        {{#each users}}
+            <li class='user' data-user-id='{{_id}}'>
+                <span class='user-name'>{{first_name}} {{last_name}}</span>
+                - Email:
+                <span class='user-email'>{{email}}</span>
+                - Rol:
+                <select class='user-role' data-user-id='{{_id}}'>
+                    <option value='user' {{#if (eq role 'user')}}selected{{/if}}>user</option>
+                    <option value='premium' {{#if (eq role 'premium')}}selected{{/if}}>premium</option>
+                </select>
+                
+                <button type='button' class='saveRoleBtn' data-user-id='{{_id}}'>Guardar</button>
+                <button type='button' class='deleteUserBtn' data-user-id='{{_id}}'>Eliminar usuario</button>
+            </li>
+        {{/each}}
+    </ul>
+
+	<a href='/'>Volver al inicio</a>
 </div>
+
+<script src='js/usersAdmin.js'></script>
