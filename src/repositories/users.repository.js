@@ -9,10 +9,6 @@ export default class UsersRepository {
         return await UsersModel.find().populate('cart')
     }
 
-    async findResume() {
-        return await UsersModel.find().select('first_name last_name email role')
-    }
-
     async findBy(field) {
         return await UsersModel.findOne(field)
     }

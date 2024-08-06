@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import UserManager from '../dao/mongo/users.mongo.js'
-import UserDTO from '../dao/DTOs/user.dto.js'
+import UserDTO, { UserResumeDTO } from '../dao/DTOs/user.dto.js'
 
 import Validate from '../utils/validate.utils.js'
 import { passportCall } from '../utils/jwt.utils.js'
@@ -23,8 +23,9 @@ UsersRouter.get('/all', async (req, res, next) => {
 // Obtener resumen de todos los usuarios
 UsersRouter.get('/', async (req, res, next) => {
 	try {
-		const users = await UserMngr.getResume()
-		res.status(200).json({ users })
+		const users = await UserMngr.get()
+		const userResumes = users.map((user) => new UserResumeDTO(user))
+		res.status(200).json({ users: userResumes })
 	} catch (error) {
 		next(error)
 	}

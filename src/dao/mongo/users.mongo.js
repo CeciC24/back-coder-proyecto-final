@@ -22,18 +22,6 @@ export default class UserManager {
 			})
 		}
 	}
-	
-	async getResume() {
-		try {
-			return await this.repository.findResume()
-		} catch (error) {
-			CustomError.createError({
-				name: 'Error al obtener resumen de usuarios',
-				message: error.message,
-				code: ErrorTypes.ERROR_INTERNAL_ERROR,
-			})
-		}
-	}
 
 	async getBy(field) {
 		try {

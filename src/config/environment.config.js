@@ -5,6 +5,7 @@ dotenv.config()
 export default {
     mongoURI: process.env.MONGO_URI,
     host: process.env.HOST,
+    rwHost: process.env.RW_HOST,
     port: process.env.PORT,
     gitClientID: process.env.GIT_CLIENT_ID,
     gitClientIDRailway: process.env.GIT_CLIENT_ID_RW,
