@@ -151,7 +151,7 @@ export default class AuthManager {
 		}
 
 		const token = generateToken(user)
-		const resetLink = config.railway == false ? `http://${config.host}:${config.port}/reset-password/${token}` : `https://${config.rwHost}/reset-password/${token}`
+		const resetLink = config.railway == "false" ? `http://${config.host}:${config.port}/reset-password/${token}` : `https://${config.rwHost}/reset-password/${token}`
 
 		const correoOptions = {
 			from: config.emailUser,
