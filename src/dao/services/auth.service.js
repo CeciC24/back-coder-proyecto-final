@@ -58,6 +58,20 @@ export default class AuthManager {
 		return { message: 'Autenticacion exitosa', token }
 	}
 
+	async logout(user) {
+		if (!user) {
+			CustomError.createError({
+				name: 'Error al cerrar sesion',
+				message: 'Usuario no encontrado',
+				code: ErrorTypes.ERROR_DATA,
+			})
+		}
+
+		userMngr.update(user._id, { last_connection: Date.now() })
+
+		return { message: 'Sesion cerrada' }
+	}
+
 	async register({ first_name, last_name, email, age, password }) {
 		if (!first_name || !last_name || !email || !age || !password) {
 			CustomError.createError({
