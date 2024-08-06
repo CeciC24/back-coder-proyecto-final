@@ -7,10 +7,12 @@ import config from './environment.config.js'
 
 import UsersModel from '../dao/mongo/models/users.model.js'
 import UserManager from '../dao/mongo/users.mongo.js'
+import CartManager from '../dao/mongo/carts.mongo.js';
 
 const JWTStrategy = jwt.Strategy
 const ExtractJWT = jwt.ExtractJwt
 const userMngr = new UserManager()
+const cartMngr = new CartManager()
 
 const initializePassport = () => {
 	const cookieExtractor = (req) => {
