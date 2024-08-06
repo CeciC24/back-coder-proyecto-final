@@ -42,9 +42,9 @@ const initializePassport = () => {
 		'github',
 		new GitHubStrategy(
 			{
-				clientID: config.railway ? config.gitClientIDRailway : config.gitClientID,
-				clientSecret: config.railway ? config.gitClientSecretRailway : config.gitClientSecret,
-				callbackURL: config.railway ? config.gitCallbackURLRailway : config.gitCallbackURL,
+				clientID: config.railway == true ? config.gitClientIDRailway : config.gitClientID,
+				clientSecret: config.railway == true ? config.gitClientSecretRailway : config.gitClientSecret,
+				callbackURL: config.railway == true ? config.gitCallbackURLRailway : config.gitCallbackURL,
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
