@@ -9,6 +9,7 @@ export default {
     gitClientID: process.env.GIT_CLIENT_ID,
     gitClientSecret: process.env.GIT_CLIENT_SECRET,
     gitCallbackURL: process.env.GIT_CALLBACK_URL,
+    gitCallbackURLRailway: process.env.GIT_CALLBACK_URL_RW,
     jwtSecret: process.env.JWT_SECRET,
     adminEmail: process.env.ADMIN_EMAIL,
     adminPassword: process.env.ADMIN_PASSWORD,
@@ -18,4 +19,5 @@ export default {
     emailService: process.env.EMAIL_SERVICE,
     emailHost: process.env.EMAIL_HOST,
     nodeEnv: process.env.NODE_ENV,
+    railway: process.env.RAILWAY,
 }

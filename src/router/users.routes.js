@@ -3,6 +3,8 @@ import UserManager from '../dao/mongo/users.mongo.js'
 import UserDTO from '../dao/DTOs/user.dto.js'
 
 import Validate from '../utils/validate.utils.js'
+import { passportCall } from '../utils/jwt.utils.js'
+import { authorization } from '../middlewares/auth.middleware.js'
 
 const UsersRouter = Router()
 
@@ -70,7 +72,7 @@ UsersRouter.put('/:id', async (req, res, next) => {
 })
 
 // Eliminar un usuario por su ID
-UsersRouter.delete('/:id', async (req, res, next) => {
+UsersRouter.delete('/:id', passportCall('current'), authorization('admin'), async (req, res, next) => {
 	try {
 		const { id } = req.params
 		Validate.id(id, 'usuario')
@@ -82,7 +84,7 @@ UsersRouter.delete('/:id', async (req, res, next) => {
 })
 
 // Eliminar usuarios inactivos
-UsersRouter.delete('/', async (req, res, next) => {
+UsersRouter.delete('/', passportCall('current'), authorization('admin'), async (req, res, next) => {
 	try {
 		res.status(200).json(await UserMngr.deleteInactives())
 	} catch (error) {

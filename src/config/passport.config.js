@@ -44,7 +44,7 @@ const initializePassport = () => {
 			{
 				clientID: config.gitClientID,
 				clientSecret: config.gitClientSecret,
-				callbackURL: config.gitCallbackURL,
+				callbackURL: config.railway ? config.gitCallbackURLRailway : config.gitCallbackURL,
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
