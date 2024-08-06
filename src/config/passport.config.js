@@ -49,6 +49,8 @@ const initializePassport = () => {
 				callbackURL: config.railway == "true" ? config.gitCallbackURLRailway : config.gitCallbackURL,
 			},
 			async (accessToken, refreshToken, profile, done) => {
+				console.log('Callback URL:', config.railway == "true" ? config.gitCallbackURLRailway : config.gitCallbackURL);
+
 				try {
 					const emailResponse = await axios.get('https://api.github.com/user/emails', {
 						headers: {
