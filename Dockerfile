@@ -1,8 +1,9 @@
 FROM node
-ENV NODE_ENV=production
 WORKDIR /app
 COPY package*.json ./
-RUN npm install --production --silent && mv node_modules ../
+RUN npm install
+RUN npm rebuild bcrypt --build-from-source
+RUN npm install -g nodemon
 COPY . .
 EXPOSE 8080
 CMD ["npm", "start"]
